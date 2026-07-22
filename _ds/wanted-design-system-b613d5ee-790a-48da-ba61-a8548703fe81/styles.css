@@ -1,0 +1,14 @@
+/* Wanted Design System — global stylesheet.
+   Import-only file; every token, font, and asset class the components rely on
+   is reachable from here. */
+
+@import './tokens/fonts.css';
+@import './tokens/fig/fig-tokens.css';
+@import './tokens/fig/fig-typography.css';
+@import './tokens/base.css';
+
+/* Bitmap assets referenced by materialized components (avatars, buttons, nav, alerts) */
+@import './components/button/fig-assets.css';
+@import './components/avatar/fig-assets.css';
+@import './components/alert/fig-assets.css';
+@import './components/navigation/fig-assets.css';

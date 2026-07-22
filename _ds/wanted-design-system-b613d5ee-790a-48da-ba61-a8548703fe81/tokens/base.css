@@ -1,0 +1,50 @@
+/* Wanted Design System — base resets + a few hand-rolled tokens the Figma
+   Variables collections don't cover (the type scale is drawn straight from
+   the file's TEXT node styles — see METADATA "Fonts" — since the kit defines
+   type via literal per-layer font-size/weight, not named text styles). */
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  font-family: var(--font-primary);
+  color: var(--label-normal, rgb(23,23,25));
+  background: var(--background-normal-normal, #fff);
+  -webkit-font-smoothing: antialiased;
+}
+
+:root {
+  /* Type scale — exact literal sizes/weights observed across the kit's TEXT nodes.
+     Pretendard JP Bold for display/headings, SemiBold for emphasis, Medium for body/UI. */
+  --type-display-size: 56px;      --type-display-weight: 700; --type-display-lh: 1.2;   /* @kind font */
+  --type-h1-size: 36px;           --type-h1-weight: 700;      --type-h1-lh: 1.334;      /* @kind font */
+  --type-h2-size: 28px;           --type-h2-weight: 700;      --type-h2-lh: 1.35;       /* @kind font */
+  --type-h3-size: 24px;           --type-h3-weight: 700;      --type-h3-lh: 1.4;        /* @kind font */
+  --type-title-size: 20px;        --type-title-weight: 600;   --type-title-lh: 1.4;     /* @kind font */
+  --type-subtitle-size: 17px;     --type-subtitle-weight: 600;--type-subtitle-lh: 1.45; /* @kind font */
+  --type-body-lg-size: 16px;      --type-body-lg-weight: 500; --type-body-lg-lh: 1.5;   /* @kind font */
+  --type-body-size: 14px;         --type-body-weight: 600;    --type-body-lh: 1.45;     /* @kind font */
+  --type-caption-size: 13px;      --type-caption-weight: 500; --type-caption-lh: 1.4;   /* @kind font */
+  --type-micro-size: 11px;        --type-micro-weight: 600;   --type-micro-lh: 1.35;    /* @kind font */
+  --type-tracking-tight: -0.027em; /* @kind other */
+  --type-tracking-normal: 0.006em; /* @kind other */
+
+  /* Corner radii observed across cards/sheets/buttons */
+  --radius-xs: 8px;   /* @kind radius */
+  --radius-sm: 12px;  /* @kind radius */
+  --radius-md: 16px;  /* @kind radius */
+  --radius-lg: 20px;  /* @kind radius */
+  --radius-xl: 32px;  /* @kind radius */
+  --radius-pill: 999px; /* @kind radius */
+
+  /* Card/elevation system — Wanted uses an INSET 1px border-shadow instead of
+     an outer drop shadow for resting cards, plus a soft outer shadow for
+     popovers/menus/dialogs. */
+  --shadow-card: inset 0 0 0 1px rgba(112,115,124,0.22); /* @kind shadow */
+  --shadow-popover: 0 4px 16px rgba(23,23,23,0.10), 0 1px 4px rgba(23,23,23,0.07); /* @kind shadow */
+  --shadow-dialog: 0 8px 32px rgba(0,0,0,0.12); /* @kind shadow */
+
+  /* Spacing scale (4px base, matches --padding-horizontal/vertical variable steps) */
+  --space-1: 4px;  --space-2: 8px; --space-3: 12px; --space-4: 16px; /* @kind spacing */
+  --space-5: 20px; --space-6: 24px; --space-7: 32px; --space-8: 40px; /* @kind spacing */
+  --space-9: 48px; --space-10: 64px; /* @kind spacing */
+}

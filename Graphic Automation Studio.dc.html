@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/wanted-design-system-b613d5ee-790a-48da-ba61-a8548703fe81/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/wanted-design-system-b613d5ee-790a-48da-ba61-a8548703fe81/tokens/fig/fig-tokens.css">
+  <link rel="stylesheet" href="_ds/wanted-design-system-b613d5ee-790a-48da-ba61-a8548703fe81/tokens/fig/fig-typography.css">
+  <link rel="stylesheet" href="_ds/wanted-design-system-b613d5ee-790a-48da-ba61-a8548703fe81/tokens/base.css">
+  <link rel="stylesheet" href="_ds/wanted-design-system-b613d5ee-790a-48da-ba61-a8548703fe81/styles.css">
+  <script src="_ds/wanted-design-system-b613d5ee-790a-48da-ba61-a8548703fe81/_ds_bundle.js"></script>
+  <style>
+    html, body { margin:0; background:rgb(247,247,248); color:rgb(23,23,25); font-family:var(--font-primary,'Pretendard JP','Pretendard',sans-serif); }
+    a { color:rgb(51,102,255); text-decoration:none; }
+    a:hover { color:rgb(41,86,222); }
+    input, textarea, button, select { font-family:inherit; }
+    ::placeholder { color:rgb(152,155,162); }
+    *::-webkit-scrollbar { width:8px; height:8px; }
+    *::-webkit-scrollbar-thumb { background:rgba(112,115,124,0.3); border-radius:4px; }
+    *::-webkit-scrollbar-track { background:transparent; }
+    @keyframes gas-spin { to { transform:rotate(360deg); } }
+  </style>
+</helmet>
+<div style="display:flex; flex-direction:column; height:100vh; min-width:1280px; background:rgb(247,247,248); color:rgb(23,23,25); letter-spacing:0.006em; overflow:hidden">
+
+  <!-- ── Header ─────────────────────────────── -->
+  <div style="display:flex; align-items:center; gap:12px; height:56px; padding:0 16px; background:rgb(255,255,255); box-shadow:inset 0 -1px 0 rgba(112,115,124,0.22); flex:none; position:relative; z-index:30">
+    <div onClick="{{ toggleDrawer }}" title="템플릿 서랍 열기/닫기" style="display:flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:8px; cursor:pointer; color:rgb(70,71,76)" style-hover="background:rgba(112,115,124,0.08); color:rgb(23,23,25)">
+      <x-import component-from-global-scope="WantedDesignSystem_b613d5.Icon" name="IconNormalMenu2NameMenuThickFalse" size="{{ 20 }}" hint-size="20px,20px"></x-import>
+    </div>
+    <div style="display:flex; align-items:center; gap:10px">
+      <div style="width:28px; height:28px; border-radius:8px; background:rgb(51,102,255); display:flex; align-items:center; justify-content:center; color:#fff">
+        <x-import component-from-global-scope="WantedDesignSystem_b613d5.Icon" name="IconNormalSparkle2NameSparkleFillFillTrue" size="{{ 16 }}" hint-size="16px,16px"></x-import>
+      </div>
+      <div style="font-size:15px; font-weight:700; letter-spacing:-0.027em">NeoM</div>
+    </div>
+    <div onClick="{{ newTask }}" style="display:flex; align-items:center; gap:6px; padding:7px 12px; border-radius:8px; font-size:13px; font-weight:600; color:rgb(70,71,76); cursor:pointer" style-hover="background:rgba(112,115,124,0.08); color:rgb(23,23,25)">
+      <x-import component-from-global-scope="WantedDesignSystem_b613d5.Icon" name="IconNormalPlus2NamePlusThickFalse" size="{{ 15 }}" hint-size="15px,15px"></x-import>
+      새 작업
+    </div>
+    <div style="width:1px; height:20px; background:rgba(112,115,124,0.22)"></div>
+    <sc-if value="{{ selectedTpl }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex; align-items:center; gap:8px; padding:5px 6px 5px 10px; border-radius:999px; background:rgba(51,102,255,0.08); box-shadow:inset 0 0 0 1px rgba(51,102,255,0.35); font-size:13px; font-weight:600; color:rgb(51,102,255)">
+        <span style="width:8px; height:8px; border-radius:2px; background:rgb(51,102,255)"></span>
+        {{ selectedTpl.name }}
+        <span onClick="{{ clearTemplate }}" title="템플릿 선택 해제" style="display:flex; align-items:center; justify-content:center; width:20px; height:20px; border-radius:50%; cursor:pointer; color:rgb(51,102,255)" style-hover="background:rgba(51,102,255,0.15)">
+          <x-import component-from-global-scope="WantedDesignSystem_b613d5.Icon" name="IconNormalClose2NameCloseThickFalse" size="{{ 12 }}" hint-size="12px,12px"></x-import>
+        </span>
+      </div>
+    </sc-if>
+    <sc-if value="{{ noTemplate }}" hint-placeholder-val="{{ false }}">
+      <div style="font-size:13px; font-weight:500; color:rgb(152,155,162)">템플릿 미선택</div>
+    </sc-if>
+    <div style="flex:1"></div>
+    <div onClick="{{ openModal }}" style="display:flex; align-items:center; gap:8px; padding:7px 12px; border-radius:999px; background:rgb(255,255,255); box-shadow:inset 0 0 0 1px rgba(112,115,124,0.22); font-size:13px; font-weight:600; cursor:pointer" style-hover="background:rgb(247,247,248)">
+      <span style="width:8px; height:8px; border-radius:50%; background:{{ modelDot }}"></span>
+      <span style="color:{{ modelLabelColor }}">{{ modelLabel }}</span>
+      <x-import component-from-global-scope="WantedDesignSystem_b613d5.Icon" name="IconNormalChevronDown3NameChevronDownThickFalseSmall" size="{{ 14 }}" style="{{ mutedIcon }}" hint-size="14px,14px"></x-import>
+    </div>
+  </div>
+
+  <!-- ── Body ─────────────────────────────── -->
+  <div style="display:flex; flex:1; min-height:0">
+
+    <!-- Template drawer -->
+    <sc-if value="{{ drawerOpen }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex; flex-direction:column; width:300px; flex:none; background:rgb(255,255,255); box-shadow:inset -1px 0 0 rgba(112,115,124,0.22); min-height:0">
+        <div style="padding:14px 14px 10px; display:flex; flex-direction:column; gap:10px; flex:none">
+          <div style="display:flex; align-items:center; justify-content:space-between">
+            <div style="font-size:13px; font-weight:700; color:rgb(70,71,76)">PSD 템플릿</div>
+            <div style="display:flex; align-items:center; gap:4px">
+              <div onClick="{{ pickListView }}" title="이름만 보기" style="display:flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:50%; cursor:pointer; background:{{ listViewBg }}; color:{{ listViewFg }}" style-hover="background:rgba(112,115,124,0.16)">
+                <x-import component-from-global-scope="WantedDesignSystem_b613d5.Icon" name="IconNormalListNameList" size="{{ 15 }}" hint-size="15px,15px"></x-import>
+              </div>
+              <div onClick="{{ pickGridView }}" title="2열 썸네일 보기" style="display:flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:50%; cursor:pointer; background:{{ gridViewBg }}; color:{{ gridViewFg }}" style-hover="background:rgba(112,115,124,0.16)">
+                <x-import component-from-global-scope="WantedDesignSystem_b613d5.Icon" name="IconNormalApps3NameApps" size="{{ 15 }}" hint-size="15px,15px"></x-import>
+              </div>
+              <div onClick="{{ toggleDrawer }}" title="서랍 닫기" style="display:flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:6px; cursor:pointer; color:rgb(152,155,162)" style-hover="background:rgba(112,115,124,0.08); color:rgb(23,23,25)">
+                <x-import component-from-global-scope="WantedDesignSystem_b613d5.Icon" name="IconNormalClose2NameCloseThickFalse" size="{{ 14 }}" hint-size="14px,14px"></x-import>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex; align-items:center; gap:8px; padding:8px 10px; border-radius:10px; background:rgb(247,247,248); box-shadow:inset 0 0 0 1px rgba(112,115,124,0.16)">
+            <x-import component-from-global-scope="WantedDesignSystem_b613d5.Icon" name="IconNormalSearch2NameSearchThickFalse" size="{{ 16 }}" style="{{ mutedIcon }}" hint-size="16px,16px"></x-import>
+            <input value="{{ search }}" onChange="{{ onSearch }}" placeholder="템플릿 검색" style="flex:1; background:transparent; border:none; outline:none; color:rgb(23,23,25); font-size:13px; font-weight:500">
+          </div>
+          <div style="display:flex; flex-wrap:wrap; gap:6px">
+            <sc-for list="{{ cats }}" as="c" hint-placeholder-count="6">
+              <div onClick="{{ c.onPick }}" style="padding: 5px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; cursor: pointer; background: {{ c.bg }}; color: {{ c.fg }}; box-shadow: {{ c.ring }}">{{ c.name }}</div>
+            </sc-for>
+          </div>
+        </div>
+
+        <!-- Grid view (2-col thumbnails) -->
+        <sc-if value="{{ isGridView }}" hint-placeholder-val="{{ true }}">
+          <div style="flex:1; overflow-y:auto; padding:4px 14px 16px; display:grid; grid-template-columns:1fr 1fr; gap:10px; align-content:start; grid-auto-rows:max-content">
+            <sc-for list="{{ tpls }}" as="t" hint-placeholder-count="4">
+              <div onClick="{{ t.onSelect }}" data-screen-label="템플릿 카드" style="border-radius:12px; background:rgb(255,255,255); box-shadow:{{ t.ring }}; cursor:pointer; overflow:hidden; position:relative" style-hover="background:rgb(247,247,248)">
+                <div style="height:80px; background:rgb(244,244,245); display:flex; flex-direction:column; justify-content:center; gap:5px; padding:12px 12px; position:relative">
+                  <div style="width:46%; height:6px; border-radius:2px; background:rgba(112,115,124,0.5)"></div>
+                  <sc-for list="{{ t.bars }}" as="b" hint-placeholder-count="3">
+                    <div style="width:{{ b.w }}%; height:{{ b.hs }}px; border-radius:2px; background:{{ b.c }}"></div>
+                  </sc-for>
+                  <sc-if value="{{ t.selected }}" hint-placeholder-val="{{ false }}">
+                    <div style="position:absolute; top:6px; left:6px; width:18px; height:18px; border-radius:50%; background:rgb(51,102,255); display:flex; align-items:center; justify-content:center; color:#fff">
+                      <x-import component-from-global-scope="WantedDesignSystem_b613d5.Icon" name="IconNormalCheck3NameCheckThickFalse" size="{{ 11 }}" hint-size="11px,11px"></x-import>
+                    </div>
+                  </sc-if>
+                  <div onClick="{{ t.onFav }}" title="즐겨찾기" style="position:absolute; top:4px; right:4px; width:22px; height:22px; border-radius:6px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:{{ t.starColor }}" style-hover="background:rgba(112,115,124,0.16)">
+                    <x-import component-from-global-scope="WantedDesignSystem_b613d5.Icon" name="{{ t.starName }}" size="{{ 13 }}" hint-size="13px,13px"></x-import>
+                  </div>
+                </div>
+                <div style="padding:8px 10px 9px; box-shadow:inset 0 1px 0 rgba(112,115,124,0.12)">
+                  <div style="font-size:11.5px; font-weight:600; color:rgb(23,23,25); white-space:nowrap; overflow:hidden; text-overflow:ellipsis">{{ t.name }}</div>
+                  <div style="font-size:10px; font-weight:500; color:rgb(152,155,162); margin-top:1px">{{ t.type }}</div>
+                </div>
+              </div>
+            </sc-for>
+            <sc-if value="{{ tplsEmpty }}" hint-placeholder-val="{{ false }}">
+              <div style="grid-column:1/-1; padding:32px 12px; text-align:center; font-size:13px; color:rgb(152,155,162)">조건에 맞는 템플릿이 없습니다.</div>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <!-- List view (names only) -->
+        <sc-if value="{{ isListView }}" hint-placeholder-val="{{ false }}">
+          <div style="flex:1; overflow-y:auto; padding:4px 10px 16px; display:flex; flex-direction:column; gap:2px">
+            <sc-for list="{{ tpls }}" as="t" hint-placeholder-count="6">
+              <div onClick="{{ t.onSelect }}" data-screen-label="템플릿 행" style="flex:none; display:flex; align-items:center; gap:10px; padding:9px 10px; border-radius:10px; cursor:pointer; background:{{ t.rowBg }}" style-hover="background:rgba(112,115,124,0.08)">
+                <sc-if value="{{ t.selected }}" hint-placeholder-val="{{ false }}">
+                  <span style="flex:none; width:18px; height:18px; border-radius:50%; background:rgb(51,102,255); display:flex; align-items:center; justify-content:center; color:#fff">
+                    <x-import component-from-global-scope="WantedDesignSystem_b613d5.Icon" name="IconNormalCheck3NameCheckThickFalse" size="{{ 11 }}" hint-size="11px,11px"></x-import>
+                  </span>
+                </sc-if>
+                <sc-if value="{{ t.notSelected }}" hint-placeholder-val="{{ true }}">
+                  <span style="flex:none; width:8px; height:8px; margin:5px; border-radius:2px; background:rgba(112,115,124,0.4)"></span>
+                </sc-if>
+                <div style="flex:1; min-width:0; display:flex; align-items:baseline; gap:8px">
+                  <span style="font-size:13px; font-weight:600; color:rgb(23,23,25); white-space:nowrap; overflow:hidden; text-overflow:ellipsis">{{ t.name }}</span>
+                  <span style="flex:none; font-size:11px; font-weight:500; color:rgb(152,155,162)">{{ t.type }}</span>
+                </div>
+                <div onClick="{{ t.onFav }}" title="즐겨찾기" style="flex:none; width:24px; height:24px; border-radius:6px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:{{ t.starColor }}" style-hover="background:rgba(112,115,124,0.16)">
+                  <x-import component-from-global-scope="WantedDesignSystem_b613d5.Icon" name="{{ t.starName }}" size="{{ 14 }}" hint-size="14px,14px"></x-import>
+                </div>
+              </div>
+            </sc-for>
+            <sc-if value="{{ tplsEmpty }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:32px 12px; text-align:center; font-size:13px; color:rgb(152,155,162)">조건에 맞는 템플릿이 없습니다.</div>
+            </sc-if>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <!-- Chat column -->
+    <div style="display:flex; flex-direction:column; flex:1; min-width:0; min-height:0" data-screen-label="채팅 작업 영역">
+      <sc-if value="{{ selectedTpl }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex; align-items:center; gap:8px; padding:8px 24px; background:rgba(51,102,255,0.05); box-shadow:inset 0 -1px 0 rgba(112,115,124,0.16); font-size:12.5px; font-weight:500; color:rgb(112,115,124); flex:none">
+          <span style="width:6px; height:6px; border-radius:2px; background:rgb(51,102,255)"></span>
+          선택된 템플릿: <b style="color:rgb(51,102,255); font-weight:600">{{ selectedTpl.name }}</b>
+          <span style="color:rgb(152,155,162)">· 생성 명령은 이 템플릿의 레이아웃으로 실행됩니다</span>
+        </div>
+      </sc-if>
+
+      <div x-ref="{{ msgRef }}" style="flex:1; overflow-y:auto; min-height:0">
+        <!-- Empty state -->
+        <sc-if value="{{ showEmpty }}" hint-placeholder-val="{{ true }}">
+          <div style="max-width:640px; margin:0 auto; padding:72px 24px 40px; display:flex; flex-direction:column; align-items:center; gap:8px; text-align:center">
+            <div style="width:44px; height:44px; border-radius:12px; background:rgba(51,102,255,0.1); display:flex; align-items:center; justify-content:center; color:rgb(51,102,255); margin-bottom:8px">
+              <x-import component-from-global-scope="WantedDesignSystem_b613d5.Icon" name="IconNormalSparkle2NameSparkleFillFillTrue" size="{{ 22 }}" hint-size="22px,22px"></x-import>
+            </div>
+            <div style="font-size:24px; font-weight:700; letter-spacing:-0.027em">무엇을 만들어 볼까요?</div>
+            <div style="font-size:14px; font-weight:500; color:rgb(112,115,124); line-height:1.6">템플릿을 고르거나, 원하는 걸 적어주세요</div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:24px; width:100%">
+              <sc-for list="{{ suggestions }}" as="s" hint-placeholder-count="4">
+                <div onClick="{{ s.onUse }}" style="padding:12px 14px; border-radius:12px; background:rgb(255,255,255); box-shadow:inset 0 0 0 1px rgba(112,115,124,0.22); font-size:13px; font-weight:500; color:rgb(70,71,76); text-align:left; cursor:pointer; line-height:1.5" style-hover="background:rgb(247,247,248); box-shadow:inset 0 0 0 1px rgba(112,115,124,0.4)">{{ s.text }}</div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+        <!-- Template intro (selected, no messages yet) -->
+        <sc-if value="{{ showTplIntro }}" hint-placeholder-val="{{ false }}">
+          <div style="max-width:640px; margin:0 auto; padding:56px 24px 40px; display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center">
+            <div style="font-size:20px; font-weight:700; letter-spacing:-0.027em">{{ introName }} 템플릿이 선택되었습니다</div>
+            <div style="font-size:13.5px; font-weight:500; color:rgb(112,115,124)">제목, 항목과 수치, 강조 대상을 자연어로 입력하면 편집 가능한 PSD를 생성합니다.</div>
+            <div style="margin-top:14px; padding:16px 18px; border-radius:12px; background:rgb(255,255,255); box-shadow:inset 0 0 0 1px rgba(112,115,124,0.22); font-size:13.5px; color:rgb(70,71,76); line-height:1.7; text-align:left; width:100%">
+              <div style="font-size:11px; font-weight:700; color:rgb(152,155,162); margin-bottom:6px">예시 입력</div>
+              “제목은 국가별 사과 보유량, 호주 50, 한국 70, 미국 100으로 만들어줘. 한국 항목만 강조해줘.”
+            </div>
+            <div onClick="{{ useExample }}" style="margin-top:6px; padding:9px 16px; border-radius:10px; background:rgb(51,102,255); color:#fff; font-size:13px; font-weight:600; cursor:pointer" style-hover="background:rgb(41,86,222)">예시 입력 사용</div>
+          </div>
+        </sc-if>
+
+        <!-- Messages -->
+        <div style="max-width:760px; margin:0 auto; padding:20px 24px 8px; display:flex; flex-direction:column; gap:16px">
+          <sc-for list="{{ msgs }}" as="m" hint-placeholder-count="0">
+            <div style="display:flex; flex-direction:column">
+              <sc-if value="{{ m.isUser }}" hint-placeholder-val="{{ false }}">
+                <div style="align-self:flex-end; max-width:70%; padding:11px 16px; border-radius:16px 16px 4px 16px; background:rgba(51,102,255,0.09); color:rgb(23,23,25); font-size:14px; font-weight:500; line-height:1.6; white-space:pre-wrap">{{ m.text }}</div>
+              </sc-if>
+              <sc-if value="{{ m.isAi }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex; gap:10px; max-width:85%">
+                  <div style="flex:none; width:28px; height:28px; border-radius:8px; background:rgba(51,102,255,0.1); display:flex; align-items:center; justify-content:center; color:rgb(51,102,255)">
+                    <x-import component-from-global-scope="WantedDesignSystem_b613d5.Icon" name="IconNormalSparkle2NameSparkleFillFillTrue" size="{{ 15 }}" hint-size="15px,15px"></x-import>
+                  </div>
+                  <div style="padding:12px 16px; border-radius:4px 16px 16px 16px; background:rgb(255,255,255); box-shadow:inset 0 0 0 1px rgba(112,115,124,0.22); font-size:13.5px; font-weight:500; line-height:1.7; color:rgb(46,47,51)">
+                    <div>{{ m.text }}</div>
+                    <sc-if value="{{ m.hasRows }}" hint-placeholder-val="{{ false }}">
+                      <div style="margin-top:8px; display:flex; flex-direction:column; gap:2px; font-size:13px; color:rgb(90,92,99)">
+                        <sc-for list="{{ m.rows }}" as="r" hint-placeholder-count="3">
+                          <div style="display:flex; gap:8px"><span style="color:rgb(152,155,162)">·</span><span>{{ r }}</span></div>
+                        </sc-for>
+                      </div>
+                    </sc-if>
+                  </div>
+                </div>
+              </sc-if>
+              <sc-if value="{{ m.isStatus }}" hint-placeholder-val="{{ false }}">
+                <div style="margin-left:38px; max-width:420px; padding:14px 18px; border-radius:12px; background:rgb(255,255,255); box-shadow:inset 0 0 0 1px rgba(112,115,124,0.22)">
+                  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px">
+                    <div style="font-size:12px; font-weight:700; color:{{ m.statusHeadColor }}">{{ m.statusHead }}</div>
+                    <sc-if value="{{ m.showCancel }}" hint-placeholder-val="{{ false }}">
+                      <div onClick="{{ m.onCancel }}" style="font-size:11.5px; font-weight:600; color:rgb(152,155,162); cursor:pointer" style-hover="color:rgb(23,23,25)">취소</div>
+                    </sc-if>
+                  </div>
+                  <div style="display:flex; flex-direction:column; gap:8px">
+                    <sc-for list="{{ m.stepsView }}" as="st" hint-placeholder-count="5">
+                      <div style="display:flex; align-items:center; gap:10px; font-size:13px; font-weight:500; color:{{ st.fg }}">
+                        <sc-if value="{{ st.done }}" hint-placeholder-val="{{ false }}">
+                          <span style="width:16px; height:16px; border-radius:50%; background:var(--status-positive, rgb(0,163,82)); display:flex; align-items:center; justify-content:center; color:#fff; flex:none">
+                            <x-import component-from-global-scope="WantedDesignSystem_b613d5.Icon" name="IconNormalCheck3NameCheckThickFalse" size="{{ 10 }}" hint-size="10px,10px"></x-import>
+                          </span>
+                        </sc-if>
+                        <sc-if value="{{ st.active }}" hint-placeholder-val="{{ false }}">
+                          <span style="width:14px; height:14px; margin:1px; border-radius:50%; border:2px solid rgba(51,102,255,0.25); border-top-color:rgb(51,102,255); animation:gas-spin 0.8s linear infinite; flex:none"></span>
+                        </sc-if>
+                        <sc-if value="{{ st.pending }}" hint-placeholder-val="{{ false }}">
+                          <span style="width:8px; height:8px; margin:4px; border-radius:50%; background:rgba(112,115,124,0.3); flex:none"></span>
+                        </sc-if>
+                        {{ st.label }}
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+              </sc-if>
+              <sc-if value="{{ m.isResult }}" hint-placeholder-val="{{ false }}">
+                <div style="margin-left:38px; max-width:560px; border-radius:16px; background:rgb(255,255,255); box-shadow:inset 0 0 0 1px rgba(112,115,124,0.22); overflow:hidden">
+                  <div style="display:flex; align-items:center; gap:8px; padding:12px 18px; box-shadow:inset 0 -1px 0 rgba(112,115,124,0.16)">
+                    <span style="width:8px; height:8px; border-radius:50%; background:var(--status-positive, rgb(0,163,82))"></span>
+                    <div style="font-size:13px; font-weight:700">생성 완료</div>
+                    <div style="flex:1"></div>
+                    <div style="font-size:11.5px; font-weight:500; color:rgb(152,155,162)">{{ m.fileName }}</div>
+                  </div>
+                  <div style="padding:18px; background:rgb(247,247,248)">
+                    <div data-screen-label="결과 프리뷰" style="border-radius:8px; background:rgb(255,255,255); box-shadow:inset 0 0 0 1px rgba(112,115,124,0.16); padding:22px 26px">
+                      <div style="font-size:17px; font-weight:700; letter-spacing:-0.027em; margin-bottom:16px">{{ m.title }}</div>
+                      <div style="display:flex; flex-direction:column; gap:10px">
+                        <sc-for list="{{ m.itemsView }}" as="it" hint-placeholder-count="3">
+                          <div style="display:flex; align-items:center; gap:10px">
+                            <div style="width:64px; flex:none; text-align:right; font-size:12.5px; font-weight:{{ it.fw }}; color:{{ it.labelColor }}">{{ it.name }}</div>
+                            <div style="flex:1; display:flex; align-items:center; gap:8px">
+                              <div style="width:{{ it.pct }}%; height:20px; border-radius:3px; background:{{ it.barColor }}"></div>
+                              <div style="font-size:12.5px; font-weight:700; color:{{ it.labelColor }}; font-variant-numeric:tabular-nums">{{ it.value }}</div>
+                            </div>
+                          </div>
+                        </sc-for>
+                      </div>
+                    </div>
+                  </div>
+                  <div style="padding:12px 18px 14px; display:flex; flex-direction:column; gap:12px">
+                    <div style="display:flex; gap:16px; font-size:12px; font-weight:500; color:rgb(152,155,162)">
+                      <span>템플릿 <b style="color:rgb(70,71,76); font-weight:600">{{ m.tplName }}</b></span>
+                      <span>모델 <b style="color:rgb(70,71,76); font-weight:600">{{ m.modelName }}</b></span>
+                    </div>
+                    <div style="display:flex; gap:8px; flex-wrap:wrap">
+                      <div onClick="{{ m.onSave }}" style="display:flex; align-items:center; gap:6px; padding:8px 14px; border-radius:9px; background:rgb(51,102,255); color:#fff; font-size:12.5px; font-weight:600; cursor:pointer" style-hover="background:rgb(41,86,222)">
+                        <x-import component-from-global-scope="WantedDesignSystem_b613d5.Icon" name="IconNormalDownload2NameDownload" size="{{ 14 }}" hint-size="14px,14px"></x-import>
+                        PSD 저장
+                      </div>
+                      <div onClick="{{ m.onEdit }}" style="display:flex; align-items:center; gap:6px; padding:8px 14px; border-radius:9px; background:rgba(112,115,124,0.08); color:rgb(46,47,51); font-size:12.5px; font-weight:600; cursor:pointer" style-hover="background:rgba(112,115,124,0.16)">
+                        <x-import component-from-global-scope="WantedDesignSystem_b613d5.Icon" name="IconNormalPencil2NamePencilFillFalse" size="{{ 14 }}" hint-size="14px,14px"></x-import>
+                        수정 요청
+                      </div>
+                      <div onClick="{{ m.onRegen }}" style="display:flex; align-items:center; gap:6px; padding:8px 14px; border-radius:9px; background:rgba(112,115,124,0.08); color:rgb(46,47,51); font-size:12.5px; font-weight:600; cursor:pointer" style-hover="background:rgba(112,115,124,0.16)">
+                        <x-import component-from-global-scope="WantedDesignSystem_b613d5.Icon" name="IconNormalRefresh2NameRefresh" size="{{ 14 }}" hint-size="14px,14px"></x-import>
+                        다시 생성
+                      </div>
+                      <div onClick="{{ m.onJson }}" style="display:flex; align-items:center; gap:6px; padding:8px 14px; border-radius:9px; background:transparent; box-shadow:inset 0 0 0 1px rgba(112,115,124,0.28); color:rgb(112,115,124); font-size:12.5px; font-weight:600; cursor:pointer" style-hover="background:rgba(112,115,124,0.08)">
+                        <x-import component-from-global-scope="WantedDesignSystem_b613d5.Icon" name="IconNormalCodeNameCode" size="{{ 14 }}" hint-size="14px,14px"></x-import>
+                        {{ m.jsonLabel }}
+                      </div>
+                    </div>
+                    <sc-if value="{{ m.showJson }}" hint-placeholder-val="{{ false }}">
+                      <pre style="margin:0; padding:14px; border-radius:10px; background:rgb(247,247,248); box-shadow:inset 0 0 0 1px rgba(112,115,124,0.22); font-size:11.5px; line-height:1.6; color:rgb(70,71,76); overflow-x:auto; font-family:'SF Mono',ui-monospace,monospace">{{ m.json }}</pre>
+                    </sc-if>
+                  </div>
+                </div>
+              </sc-if>
+              <sc-if value="{{ m.isError }}" hint-placeholder-val="{{ false }}">
+                <div style="margin-left:38px; max-width:460px; padding:14px 18px; border-radius:12px; background:rgba(230,60,60,0.05); box-shadow:inset 0 0 0 1px rgba(230,60,60,0.3); display:flex; gap:12px">
+                  <div style="flex:none; color:var(--status-negative, rgb(230,60,60)); margin-top:1px">
+                    <x-import component-from-global-scope="WantedDesignSystem_b613d5.Icon" name="IconNormalTriangleExclamation2NameTriangleExclamationFillFillTrue" size="{{ 18 }}" hint-size="18px,18px"></x-import>
+                  </div>
+                  <div>
+                    <div style="font-size:13px; font-weight:700; margin-bottom:3px">{{ m.title }}</div>
+                    <div style="font-size:12.5px; font-weight:500; color:rgb(90,92,99); line-height:1.6">{{ m.text }}</div>
+                    <sc-if value="{{ m.onAction }}" hint-placeholder-val="{{ false }}">
+                      <div onClick="{{ m.onAction }}" style="display:inline-flex; margin-top:10px; padding:7px 13px; border-radius:8px; background:rgba(112,115,124,0.08); font-size:12px; font-weight:600; color:rgb(46,47,51); cursor:pointer" style-hover="background:rgba(112,115,124,0.16)">{{ m.actionLabel }}</div>
+                    </sc-if>
+                  </div>
+                </div>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <!-- Composer -->
+      <div style="flex:none; padding:12px 24px 16px; max-width:808px; margin:0 auto; width:100%">
+        <div style="border-radius:16px; background:rgb(255,255,255); box-shadow:inset 0 0 0 1px rgba(112,115,124,0.22), 0 1px 4px rgba(23,23,23,0.05); padding:12px 14px 10px">
+          <sc-if value="{{ selectedTpl }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex; margin-bottom:8px">
+              <div style="display:flex; align-items:center; gap:6px; padding:4px 10px; border-radius:999px; background:rgba(51,102,255,0.08); font-size:11.5px; font-weight:600; color:rgb(51,102,255)">
+                <x-import component-from-global-scope="WantedDesignSystem_b613d5.Icon" name="IconNormalTemplateNameTemplateFillFalse" size="{{ 12 }}" hint-size="12px,12px"></x-import>
+                {{ selectedTpl.name }}
+              </div>
+            </div>
+          </sc-if>
+          <textarea x-ref="{{ taRef }}" value="{{ composer }}" onChange="{{ onCompose }}" onKeyDown="{{ onKey }}" rows="{{ 2 }}" placeholder="{{ composerPh }}" style="width:100%; resize:none; background:transparent; border:none; outline:none; color:rgb(23,23,25); font-size:14px; font-weight:500; line-height:1.6"></textarea>
+          <div style="display:flex; align-items:center; gap:4px; margin-top:6px">
+            <div title="파일 첨부" style="display:flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:8px; cursor:pointer; color:rgb(112,115,124)" style-hover="background:rgba(112,115,124,0.08); color:rgb(46,47,51)">
+              <x-import component-from-global-scope="WantedDesignSystem_b613d5.Icon" name="IconNormalAttachmentNameAttachment" size="{{ 17 }}" hint-size="17px,17px"></x-import>
+            </div>
+            <div title="음성 입력" style="display:flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:8px; cursor:pointer; color:rgb(112,115,124)" style-hover="background:rgba(112,115,124,0.08); color:rgb(46,47,51)">
+              <x-import component-from-global-scope="WantedDesignSystem_b613d5.Icon" name="IconNormalMicrophoneNameMicrophoneFillFalse" size="{{ 17 }}" hint-size="17px,17px"></x-import>
+            </div>
+            <div style="flex:1"></div>
+            <div style="font-size:11.5px; font-weight:500; color:rgb(152,155,162); margin-right:8px">{{ composerModel }}</div>
+            <div onClick="{{ onSend }}" title="전송" style="display:flex; align-items:center; justify-content:center; width:34px; height:34px; border-radius:10px; background:{{ sendBg }}; color:{{ sendFg }}; cursor:pointer">
+              <x-import component-from-global-scope="WantedDesignSystem_b613d5.Icon" name="IconNormalSend2NameSendFillFillTrue" size="{{ 16 }}" hint-size="16px,16px"></x-import>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Status bar ─────────────────────────── -->
+  <div style="flex:none; display:flex; align-items:center; gap:20px; height:30px; padding:0 16px; background:rgb(255,255,255); box-shadow:inset 0 1px 0 rgba(112,115,124,0.22); font-size:11.5px; font-weight:500; color:rgb(152,155,162)">
+    <span>템플릿 <b style="color:rgb(70,71,76); font-weight:600">{{ statusTpl }}</b></span>
+    <span style="display:flex; align-items:center; gap:6px">상태 <span style="width:6px; height:6px; border-radius:50%; background:{{ genDot }}"></span><b style="color:rgb(70,71,76); font-weight:600">{{ genState }}</b></span>
+    <div style="flex:1"></div>
+    <span>모델 <b style="color:rgb(70,71,76); font-weight:600">{{ statusModel }}</b></span>
+  </div>
+
+  <!-- ── Toast ──────────────────────────────── -->
+  <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed; bottom:48px; left:50%; transform:translateX(-50%); padding:11px 20px; border-radius:12px; background:rgb(41,42,45); box-shadow:0 8px 32px rgba(23,23,23,0.25); font-size:13px; font-weight:600; color:rgb(255,255,255); z-index:200; display:flex; align-items:center; gap:8px">
+      <span style="color:rgb(0,207,104); display:flex">
+        <x-import component-from-global-scope="WantedDesignSystem_b613d5.Icon" name="IconNormalCircleCheck2NameCircleCheckFillFillTrue" size="{{ 16 }}" hint-size="16px,16px"></x-import>
+      </span>
+      {{ toast }}
+    </div>
+  </sc-if>
+
+  <!-- ── AI model modal ─────────────────────── -->
+  <sc-if value="{{ modalOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeModal }}" style="position:fixed; inset:0; background:rgba(23,23,25,0.45); z-index:100; display:flex; align-items:center; justify-content:center">
+      <div onClick="{{ stopProp }}" data-screen-label="AI 모델 연결" style="width:480px; border-radius:20px; background:rgb(255,255,255); box-shadow:0 8px 32px rgba(0,0,0,0.12); padding:24px">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:18px">
+          <div style="font-size:17px; font-weight:700; letter-spacing:-0.027em">AI 모델 연결</div>
+          <div onClick="{{ closeModal }}" style="display:flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:8px; cursor:pointer; color:rgb(152,155,162)" style-hover="background:rgba(112,115,124,0.08); color:rgb(23,23,25)">
+            <x-import component-from-global-scope="WantedDesignSystem_b613d5.Icon" name="IconNormalClose2NameCloseThickFalse" size="{{ 16 }}" hint-size="16px,16px"></x-import>
+          </div>
+        </div>
+        <div style="display:flex; padding:3px; border-radius:11px; background:rgb(244,244,245); margin-bottom:20px">
+          <div onClick="{{ pickInternal }}" style="flex:1; text-align:center; padding:8px 0; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; background:{{ segIntBg }}; color:{{ segIntFg }}; box-shadow:{{ segIntShadow }}">내부 서버</div>
+          <div onClick="{{ pickExternal }}" style="flex:1; text-align:center; padding:8px 0; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; background:{{ segExtBg }}; color:{{ segExtFg }}; box-shadow:{{ segExtShadow }}">외부 API</div>
+        </div>
+
+        <sc-if value="{{ isInternal }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex; flex-direction:column; gap:6px; margin-bottom:16px">
+            <label style="font-size:12px; font-weight:600; color:rgb(112,115,124)">서버 주소</label>
+            <div style="display:flex; gap:8px">
+              <input value="{{ serverUrl }}" onChange="{{ onUrl }}" placeholder="http://000.000.0.00:11434" style="flex:1; padding:10px 12px; border-radius:10px; border:none; outline:none; background:rgb(247,247,248); box-shadow:inset 0 0 0 1px rgba(112,115,124,0.22); color:rgb(23,23,25); font-size:13px; font-weight:500">
+              <div onClick="{{ lookup }}" style="flex:none; display:flex; align-items:center; padding:0 16px; border-radius:10px; background:rgba(112,115,124,0.08); font-size:13px; font-weight:600; color:rgb(46,47,51); cursor:pointer" style-hover="background:rgba(112,115,124,0.16)">조회</div>
+            </div>
+            <div style="font-size:11px; font-weight:500; color:rgb(152,155,162)">내부망 서버 주소를 입력해 주세요.</div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isExternal }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex; flex-direction:column; gap:6px; margin-bottom:14px; position:relative">
+            <label style="font-size:12px; font-weight:600; color:rgb(112,115,124)">API 제공자</label>
+            <div onClick="{{ toggleProvDrop }}" style="display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-radius:10px; background:rgb(247,247,248); box-shadow:inset 0 0 0 1px rgba(112,115,124,0.22); font-size:13px; font-weight:600; cursor:pointer">
+              {{ provider }}
+              <x-import component-from-global-scope="WantedDesignSystem_b613d5.Icon" name="IconNormalChevronDown3NameChevronDownThickFalseSmall" size="{{ 14 }}" style="{{ mutedIcon }}" hint-size="14px,14px"></x-import>
+            </div>
+            <sc-if value="{{ provDropOpen }}" hint-placeholder-val="{{ false }}">
+              <div style="position:absolute; top:100%; left:0; right:0; margin-top:4px; border-radius:12px; background:rgb(255,255,255); box-shadow:0 4px 16px rgba(23,23,23,0.1), 0 1px 4px rgba(23,23,23,0.07), inset 0 0 0 1px rgba(112,115,124,0.16); padding:5px; z-index:10">
+                <sc-for list="{{ providersView }}" as="p" hint-placeholder-count="3">
+                  <div onClick="{{ p.onPick }}" style="display:flex; align-items:center; justify-content:space-between; padding:9px 11px; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; color:{{ p.fg }}" style-hover="background:rgba(112,115,124,0.08)">
+                    {{ p.name }}
+                    <sc-if value="{{ p.sel }}" hint-placeholder-val="{{ false }}">
+                      <span style="color:rgb(51,102,255); display:flex">
+                        <x-import component-from-global-scope="WantedDesignSystem_b613d5.Icon" name="IconNormalCheck3NameCheckThickFalse" size="{{ 14 }}" hint-size="14px,14px"></x-import>
+                      </span>
+                    </sc-if>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:6px; margin-bottom:16px">
+            <label style="font-size:12px; font-weight:600; color:rgb(112,115,124)">Secret Key</label>
+            <div style="display:flex; gap:8px">
+              <div style="flex:1; display:flex; align-items:center; border-radius:10px; background:rgb(247,247,248); box-shadow:inset 0 0 0 1px rgba(112,115,124,0.22); padding-right:6px">
+                <input type="{{ keyInputType }}" value="{{ apiKey }}" onChange="{{ onKeyInput }}" placeholder="sk-••••••••••••••••" style="flex:1; padding:10px 12px; border:none; outline:none; background:transparent; color:rgb(23,23,25); font-size:13px; font-weight:500">
+                <div onClick="{{ toggleShowKey }}" title="보기/숨기기" style="display:flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:6px; cursor:pointer; color:rgb(152,155,162)" style-hover="background:rgba(112,115,124,0.08); color:rgb(46,47,51)">
+                  <x-import component-from-global-scope="WantedDesignSystem_b613d5.Icon" name="{{ keyEyeName }}" size="{{ 15 }}" hint-size="15px,15px"></x-import>
+                </div>
+              </div>
+              <div onClick="{{ lookup }}" style="flex:none; display:flex; align-items:center; padding:0 16px; border-radius:10px; background:rgba(112,115,124,0.08); font-size:13px; font-weight:600; color:rgb(46,47,51); cursor:pointer" style-hover="background:rgba(112,115,124,0.16)">조회</div>
+            </div>
+            <div style="font-size:11px; font-weight:500; color:rgb(152,155,162)">Secret Key는 안전하게 암호화하여 저장됩니다.</div>
+          </div>
+        </sc-if>
+
+        <div style="display:flex; flex-direction:column; gap:6px; margin-bottom:16px">
+          <label style="font-size:12px; font-weight:600; color:rgb(112,115,124)">연결 상태</label>
+          <div style="display:flex; align-items:center; gap:8px; padding:10px 12px; border-radius:10px; background:rgb(247,247,248); box-shadow:inset 0 0 0 1px rgba(112,115,124,0.12); font-size:13px; font-weight:600; color:{{ connColor }}">
+            <sc-if value="{{ connChecking }}" hint-placeholder-val="{{ false }}">
+              <span style="width:12px; height:12px; border-radius:50%; border:2px solid rgba(51,102,255,0.25); border-top-color:rgb(51,102,255); animation:gas-spin 0.8s linear infinite; flex:none"></span>
+            </sc-if>
+            <sc-if value="{{ connNotChecking }}" hint-placeholder-val="{{ true }}">
+              <span style="width:8px; height:8px; border-radius:50%; background:{{ connDot }}; flex:none"></span>
+            </sc-if>
+            <span>{{ connText }}</span>
+          </div>
+          <sc-if value="{{ connSubText }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:11.5px; font-weight:500; color:rgb(152,155,162); padding-left:2px">{{ connSubText }}</div>
+          </sc-if>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:6px; margin-bottom:22px; position:relative">
+          <label style="font-size:12px; font-weight:600; color:{{ modelLabelClr }}">사용 가능한 모델</label>
+          <div onClick="{{ toggleModelDrop }}" style="display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-radius:10px; background:rgb(247,247,248); box-shadow:inset 0 0 0 1px rgba(112,115,124,0.22); font-size:13px; font-weight:600; cursor:{{ modelCursor }}; color:{{ modelFieldClr }}; opacity:{{ modelOpacity }}">
+            {{ modelFieldText }}
+            <x-import component-from-global-scope="WantedDesignSystem_b613d5.Icon" name="IconNormalChevronDown3NameChevronDownThickFalseSmall" size="{{ 14 }}" style="{{ mutedIcon }}" hint-size="14px,14px"></x-import>
+          </div>
+          <sc-if value="{{ modelDropOpen }}" hint-placeholder-val="{{ false }}">
+            <div style="position:absolute; top:100%; left:0; right:0; margin-top:4px; border-radius:12px; background:rgb(255,255,255); box-shadow:0 4px 16px rgba(23,23,23,0.1), 0 1px 4px rgba(23,23,23,0.07), inset 0 0 0 1px rgba(112,115,124,0.16); padding:5px; z-index:10; max-height:180px; overflow-y:auto">
+              <sc-for list="{{ modelsView }}" as="mo" hint-placeholder-count="3">
+                <div onClick="{{ mo.onPick }}" style="display:flex; align-items:center; justify-content:space-between; padding:9px 11px; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; color:{{ mo.fg }}; font-family:'SF Mono',ui-monospace,monospace" style-hover="background:rgba(112,115,124,0.08)">
+                  {{ mo.name }}
+                  <sc-if value="{{ mo.sel }}" hint-placeholder-val="{{ false }}">
+                    <span style="color:rgb(51,102,255); display:flex">
+                      <x-import component-from-global-scope="WantedDesignSystem_b613d5.Icon" name="IconNormalCheck3NameCheckThickFalse" size="{{ 14 }}" hint-size="14px,14px"></x-import>
+                    </span>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:8px">
+          <div onClick="{{ closeModal }}" style="padding:9px 18px; border-radius:10px; background:rgba(112,115,124,0.08); font-size:13px; font-weight:600; color:rgb(46,47,51); cursor:pointer" style-hover="background:rgba(112,115,124,0.16)">닫기</div>
+          <div onClick="{{ saveConn }}" style="padding:9px 22px; border-radius:10px; background:{{ saveBg }}; font-size:13px; font-weight:600; color:{{ saveFg }}; cursor:{{ saveCursor }}">저장</div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:900},&quot;drawerOpenDefault&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;레이아웃&quot;},&quot;stepMs&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:650,&quot;min&quot;:200,&quot;max&quot;:1500,&quot;step&quot;:50,&quot;unit&quot;:&quot;ms&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;생성 시뮬레이션&quot;},&quot;demoConnectionFail&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;생성 시뮬레이션&quot;}}">
+const TPLS = [
+  { id:'hbar-a', name:'가로 막대그래프 A', type:'막대', cat:'막대', recent:true,
+    bars:[{w:78,h:10,c:'rgb(51,102,255)'},{w:52,h:10,c:'rgb(174,176,182)'},{w:92,h:10,c:'rgb(174,176,182)'}] },
+  { id:'hbar-b', name:'가로 막대그래프 B', type:'막대', cat:'막대',
+    bars:[{w:60,h:14,c:'rgb(174,176,182)'},{w:88,h:14,c:'rgb(51,102,255)'}] },
+  { id:'sync-a', name:'인터뷰 싱크그래픽', type:'싱크', cat:'싱크', recent:true,
+    bars:[{w:34,h:22,c:'rgb(194,196,200)'},{w:80,h:7,c:'rgb(174,176,182)'},{w:64,h:7,c:'rgb(174,176,182)'}] },
+  { id:'callout-a', name:'인물 돌출 그래픽', type:'돌출', cat:'돌출',
+    bars:[{w:20,h:30,c:'rgb(194,196,200)'},{w:70,h:8,c:'rgb(174,176,182)'},{w:48,h:8,c:'rgb(174,176,182)'}] },
+  { id:'line-a', name:'추이 선 그래프', type:'선', cat:'선',
+    bars:[{w:96,h:3,c:'rgb(51,102,255)'},{w:96,h:3,c:'rgb(194,196,200)'},{w:96,h:3,c:'rgb(194,196,200)'}] },
+  { id:'pie-a', name:'점유율 원 그래프', type:'원', cat:'원',
+    bars:[{w:30,h:34,c:'rgb(51,102,255)'},{w:52,h:8,c:'rgb(174,176,182)'}] },
+  { id:'timeline-a', name:'사건 타임라인', type:'타임라인', cat:'타임라인',
+    bars:[{w:96,h:4,c:'rgb(51,102,255)'},{w:22,h:8,c:'rgb(174,176,182)'},{w:22,h:8,c:'rgb(174,176,182)'}] },
+  { id:'table-a', name:'2단 비교 도표', type:'도표', cat:'도표',
+    bars:[{w:44,h:26,c:'rgb(194,196,200)'},{w:44,h:26,c:'rgba(51,102,255,0.55)'}] },
+  { id:'table-b', name:'핵심 수치 도표', type:'도표', cat:'도표',
+    bars:[{w:38,h:24,c:'rgb(51,102,255)'},{w:60,h:8,c:'rgb(174,176,182)'}] },
+  { id:'map-a', name:'전국 지도 그래픽', type:'지도', cat:'지도',
+    bars:[{w:30,h:34,c:'rgb(194,196,200)'},{w:58,h:8,c:'rgb(174,176,182)'}] },
+  { id:'alpha-a', name:'투명 자막바', type:'투명', cat:'투명',
+    bars:[{w:88,h:14,c:'rgba(112,115,124,0.25)'},{w:60,h:8,c:'rgba(112,115,124,0.35)'}] },
+];
+const CATS = ['전체','싱크','돌출','막대','선','원','타임라인','도표','지도','투명','즐겨찾기'];
+const STEPS = ['자연어 분석 중','Graphic Spec JSON 생성 중','레이아웃 계산 중','PSD 생성 중','프리뷰 생성 중'];
+const MODELS = {
+  internal: ['qwen3.5:35b','qwen3:8b','qwen2.5-vl:7b'],
+  'GPT': ['gpt-5.2','gpt-5.2-mini','gpt-4.1'],
+  'Anthropic': ['claude-sonnet-4.5','claude-opus-4.5','claude-haiku-4'],
+  'Google Gemini': ['gemini-3-pro','gemini-3-flash'],
+};
+class Component extends DCLogic {
+  state = {
+    drawerOpen: null, search:'', cat:'전체', favs:{'hbar-a':true,'sync-a':true}, viewMode:'grid',
+    selectedId:null, modalOpen:false, provDropOpen:false, modelDropOpen:false,
+    mode:'internal', serverUrl:'http://192.168.0.25:11434', provider:'GPT', apiKey:'', showKey:false,
+    connStatus:'idle', models:[], model:null, lastModel:null, saved:null,
+    messages:[], busy:false, genState:'대기', composer:'', toast:null,
+  };
+  msgRef = React.createRef(); taRef = React.createRef();
+  _timers = [];
+  componentDidUpdate(pp, ps) {
+    if (ps.messages !== this.state.messages && this.msgRef.current) {
+      const el = this.msgRef.current; el.scrollTop = el.scrollHeight;
+    }
+  }
+  componentWillUnmount(){ this._timers.forEach(clearTimeout); }
+  later(fn, ms){ this._timers.push(setTimeout(fn, ms)); }
+  setMsg(id, patch){ this.setState(s => ({ messages: s.messages.map(m => m.id===id ? {...m, ...patch} : m) })); }
+  pushMsg(m){ this.setState(s => ({ messages: [...s.messages, m] })); }
+  showToast(t){ this.setState({toast:t}); this.later(()=>this.setState({toast:null}), 2600); }
+
+  parse(text){
+    const titleM = text.match(/제목은\s*([^,.\n]+?)(?:[,.]|으로|$)/);
+    const hlM = text.match(/([가-힣A-Za-z]{1,8})(?:\s*항목)?만\s*강조/);
+    const stop = ['제목','강조','항목','으로','만들어','값을','수치','그래프'];
+    const items = [];
+    const re = /([가-힣A-Za-z]{1,10})\s*(\d+(?:\.\d+)?)/g; let m;
+    while ((m = re.exec(text))) { if (!stop.some(s=>m[1].includes(s))) items.push({name:m[1], value:parseFloat(m[2])}); }
+    return {
+      title: titleM ? titleM[1].trim() : '국가별 사과 보유량',
+      items: items.length ? items.slice(0,6) : [{name:'호주',value:50},{name:'한국',value:70},{name:'미국',value:100}],
+      highlight: hlM ? hlM[1] : null,
+    };
+  }
+  runGeneration(spec){
+    const tpl = TPLS.find(t=>t.id===this.state.selectedId);
+    const model = this.state.saved.model;
+    const sid = 'st'+Date.now();
+    this.pushMsg({ id:sid, role:'status', stepIdx:0, done:false, canceled:false });
+    this.setState({busy:true, genState:'생성 중'});
+    const stepMs = this.props.stepMs ?? 650;
+    STEPS.forEach((_, i) => {
+      if (i===0) return;
+      this.later(() => { const cur = this.state.messages.find(m=>m.id===sid); if (cur && !cur.canceled) this.setMsg(sid, {stepIdx:i}); }, stepMs*i);
+    });
+    this.later(() => {
+      const cur = this.state.messages.find(m=>m.id===sid); if (!cur || cur.canceled) return;
+      this.setMsg(sid, {done:true});
+      const json = JSON.stringify({ taskType:'psd.generate', templateId:tpl.id, layoutEngine:'horizontalBarLayout',
+        spec:{ title:spec.title, items:spec.items, highlight:spec.highlight }, output:{ format:'psd', editable:true } }, null, 2);
+      this.pushMsg({ id:'r'+Date.now(), role:'result', title:spec.title, items:spec.items, highlight:spec.highlight,
+        tplName:tpl.name, modelName:model, fileName:tpl.id+'.psd', json, showJson:false, spec });
+      this.setState({busy:false, genState:'생성 완료'});
+    }, stepMs*STEPS.length);
+  }
+  send(raw){
+    const text = (raw ?? this.state.composer).trim();
+    if (!text || this.state.busy) return;
+    this.pushMsg({id:'u'+Date.now(), role:'user', text});
+    this.setState({composer:''});
+    if (!this.state.saved) {
+      this.later(()=>this.pushMsg({id:'e'+Date.now(), role:'error', title:'AI 모델이 연결되지 않았습니다',
+        text:'우측 상단에서 내부 서버 또는 외부 API를 연결한 뒤 다시 시도해 주세요.', action:'connect'}), 250);
+      this.setState({genState:'대기'}); return;
+    }
+    if (!this.state.selectedId) {
+      this.later(()=>this.pushMsg({id:'e'+Date.now(), role:'error', title:'PSD 템플릿이 선택되지 않았습니다',
+        text:'좌측 서랍에서 템플릿 프리뷰를 선택하면 해당 레이아웃으로 생성합니다.', action:'drawer'}), 250);
+      return;
+    }
+    const spec = this.parse(text);
+    const tpl = TPLS.find(t=>t.id===this.state.selectedId);
+    this.later(()=>{
+      this.pushMsg({id:'a'+Date.now(), role:'ai',
+        text:`${tpl.name} 템플릿으로 다음 데이터를 생성합니다.`,
+        rows:[...spec.items.map(it=>`${it.name}  ${it.value}`), spec.highlight?`강조 항목: ${spec.highlight}`:'강조 항목: 없음']});
+      this.runGeneration(spec);
+    }, 350);
+  }
+  lookup(){
+    if (this.state.connStatus==='checking') return;
+    this.setState({connStatus:'checking', models:[], modelDropOpen:false});
+    const fail = this.props.demoConnectionFail ?? false;
+    this.later(()=>{
+      if (this.state.mode==='internal') {
+        const url = this.state.serverUrl.trim();
+        if (fail || !/^https?:\/\/.+/.test(url)) { this.setState({connStatus:'failed', model:null}); return; }
+        if (url.includes('empty')) { this.setState({connStatus:'nomodels', models:[], model:null}); return; }
+        const models = MODELS.internal;
+        const model = models.includes(this.state.lastModel) ? this.state.lastModel : models[0];
+        this.setState({connStatus:'connected', models, model});
+      } else {
+        const key = this.state.apiKey.trim();
+        if (fail || key.length < 8) { this.setState({connStatus:'authfail', model:null}); return; }
+        const models = MODELS[this.state.provider];
+        const model = models.includes(this.state.lastModel) ? this.state.lastModel : models[0];
+        this.setState({connStatus:'connected', models, model});
+      }
+    }, 1100);
+  }
+  renderVals(){
+    const s = this.state;
+    const drawerOpen = s.drawerOpen ?? (this.props.drawerOpenDefault ?? true);
+    const selectedTpl = TPLS.find(t=>t.id===s.selectedId) || null;
+    const q = s.search.trim();
+    const tplsRaw = TPLS.filter(t =>
+      (s.cat==='전체' || (s.cat==='즐겨찾기' ? s.favs[t.id] : t.cat===s.cat)) &&
+      (!q || t.name.includes(q) || t.type.includes(q)));
+    const tpls = tplsRaw.map(t => ({ ...t,
+      bars: t.bars.map(b => ({...b, hs: Math.max(3, Math.round(b.h*0.6))})),
+      selected: t.id===s.selectedId, notSelected: t.id!==s.selectedId,
+      rowBg: t.id===s.selectedId ? 'rgba(51,102,255,0.08)' : 'transparent',
+      ring: t.id===s.selectedId ? 'inset 0 0 0 2px rgb(51,102,255)' : 'inset 0 0 0 1px rgba(112,115,124,0.22)',
+      starName: s.favs[t.id] ? 'IconNormalStar3NameStarFillFillTrue' : 'IconNormalStar3NameStarFillFalse',
+      starColor: s.favs[t.id] ? 'var(--status-cautionary, rgb(255,150,35))' : 'rgb(152,155,162)',
+      onSelect: () => this.setState({selectedId: t.id}),
+      onFav: (e) => { e.stopPropagation(); this.setState(st=>({favs:{...st.favs, [t.id]: !st.favs[t.id]}})); },
+    }));
+    const cats = CATS.map(c => ({ name:c,
+      bg: c===s.cat ? 'rgb(51,102,255)' : 'rgba(112,115,124,0.06)',
+      fg: c===s.cat ? '#fff' : 'rgb(112,115,124)',
+      ring: c===s.cat ? 'none' : 'inset 0 0 0 1px rgba(112,115,124,0.16)',
+      onPick: () => this.setState({cat:c}),
+    }));
+    const msgs = s.messages.map(m => {
+      const v = { ...m, isUser:m.role==='user', isAi:m.role==='ai', isStatus:m.role==='status', isResult:m.role==='result', isError:m.role==='error' };
+      if (v.isAi) v.hasRows = !!(m.rows && m.rows.length);
+      if (v.isStatus) {
+        v.statusHead = m.canceled ? '사용자 취소' : (m.done ? 'PSD 생성 완료' : 'PSD 생성 진행 중');
+        v.statusHeadColor = m.canceled ? 'rgb(112,115,124)' : (m.done ? 'var(--status-positive, rgb(0,163,82))' : 'rgb(51,102,255)');
+        v.showCancel = !m.done && !m.canceled;
+        v.onCancel = () => { this.setMsg(m.id, {canceled:true}); this.setState({busy:false, genState:'사용자 취소'}); };
+        v.stepsView = STEPS.map((label,i)=>{
+          const done = m.done || i < m.stepIdx;
+          const active = !m.done && !m.canceled && i===m.stepIdx;
+          return { label, done, active, pending: !done && !active,
+            fg: done ? 'rgb(112,115,124)' : active ? 'rgb(23,23,25)' : 'rgb(174,176,182)' };
+        });
+      }
+      if (v.isResult) {
+        const max = Math.max(...m.items.map(it=>it.value));
+        v.itemsView = m.items.map(it => {
+          const hl = m.highlight && it.name.includes(m.highlight);
+          return { ...it, pct: Math.max(6, Math.round(it.value/max*100)),
+            barColor: hl ? 'rgb(51,102,255)' : 'rgb(194,196,200)',
+            labelColor: hl ? 'rgb(51,102,255)' : 'rgb(70,71,76)', fw: hl ? 700 : 500 };
+        });
+        v.jsonLabel = m.showJson ? 'JSON 닫기' : 'JSON 보기';
+        v.onJson = () => this.setMsg(m.id, {showJson: !m.showJson});
+        v.onSave = () => this.showToast(`PSD 저장됨 · ${m.fileName}`);
+        v.onEdit = () => { this.setState({composer:'한국 값을 90으로 바꾸고 미국도 강조해줘'}); if (this.taRef.current) this.taRef.current.focus(); };
+        v.onRegen = () => { if (!this.state.busy) this.runGeneration(m.spec); };
+      }
+      if (v.isError) {
+        v.actionLabel = m.action==='connect' ? 'AI 모델 연결' : '템플릿 서랍 열기';
+        v.onAction = m.action==='connect' ? () => this.setState({modalOpen:true}) : () => this.setState({drawerOpen:true});
+      }
+      return v;
+    });
+    const connMap = {
+      idle:      { text:'아직 연결을 확인하지 않았어요.', color:'rgb(112,115,124)', dot:'rgb(174,176,182)' },
+      checking:  { text:'서버에 연결하는 중…', color:'rgb(51,102,255)', dot:'rgb(51,102,255)' },
+      connected: { text: s.mode==='internal' ? '연결됨 · Ollama 서버' : `연결됨 · ${s.provider}`, color:'var(--status-positive, rgb(0,163,82))', dot:'var(--status-positive, rgb(0,163,82))' },
+      failed:    { text:'연결 실패', color:'var(--status-negative, rgb(230,60,60))', dot:'var(--status-negative, rgb(230,60,60))', sub:'서버에 접근할 수 없습니다. 주소와 네트워크 상태를 확인해 주세요.' },
+      authfail:  { text:'인증 실패', color:'var(--status-negative, rgb(230,60,60))', dot:'var(--status-negative, rgb(230,60,60))', sub:'Secret Key가 유효하지 않습니다. 키를 다시 확인해 주세요.' },
+      nomodels:  { text:'서버 연결됨 · 설치된 모델이 없습니다.', color:'var(--status-cautionary, rgb(255,150,35))', dot:'var(--status-cautionary, rgb(255,150,35))' },
+    };
+    const conn = connMap[s.connStatus];
+    const connected = s.connStatus==='connected';
+    const canSave = connected && !!s.model;
+    const modelsView = s.models.map(name => ({ name, sel: name===s.model,
+      fg: name===s.model ? 'rgb(51,102,255)' : 'rgb(46,47,51)',
+      onPick: () => this.setState({model:name, lastModel:name, modelDropOpen:false}) }));
+    const providersView = ['GPT','Anthropic','Google Gemini'].map(name => ({ name, sel:name===s.provider,
+      fg: name===s.provider ? 'rgb(51,102,255)' : 'rgb(46,47,51)',
+      onPick: () => this.setState({provider:name, provDropOpen:false, connStatus:'idle', models:[], model:null}) }));
+    const showEmpty = s.messages.length===0 && !selectedTpl;
+    const showTplIntro = s.messages.length===0 && !!selectedTpl;
+    return {
+      drawerOpen, selectedTpl, noTemplate: !selectedTpl, tpls, tplsEmpty: tpls.length===0, cats,
+      isGridView: s.viewMode==='grid', isListView: s.viewMode==='list',
+      pickGridView: () => this.setState({viewMode:'grid'}),
+      pickListView: () => this.setState({viewMode:'list'}),
+      gridViewBg: s.viewMode==='grid' ? 'rgba(112,115,124,0.16)' : 'transparent',
+      gridViewFg: s.viewMode==='grid' ? 'rgb(23,23,25)' : 'rgb(152,155,162)',
+      listViewBg: s.viewMode==='list' ? 'rgba(112,115,124,0.16)' : 'transparent',
+      listViewFg: s.viewMode==='list' ? 'rgb(23,23,25)' : 'rgb(152,155,162)',
+      search: s.search, onSearch: e=>this.setState({search:e.target.value}),
+      toggleDrawer: () => this.setState({drawerOpen: !drawerOpen}),
+      clearTemplate: e => { e.stopPropagation(); this.setState({selectedId:null}); },
+      newTask: () => { this._timers.forEach(clearTimeout); this.setState({messages:[], busy:false, genState:'대기', composer:''}); },
+      mutedIcon: {color:'rgb(152,155,162)'},
+      modelDot: s.saved ? 'var(--status-positive, rgb(0,163,82))' : 'rgb(174,176,182)',
+      modelLabel: s.saved ? `연결됨 · ${s.saved.model}` : '모델 미연결',
+      modelLabelColor: s.saved ? 'rgb(23,23,25)' : 'rgb(112,115,124)',
+      openModal: () => this.setState({modalOpen:true}),
+      closeModal: () => this.setState({modalOpen:false, provDropOpen:false, modelDropOpen:false}),
+      stopProp: e => e.stopPropagation(),
+      showEmpty, showTplIntro, introName: selectedTpl ? selectedTpl.name : '',
+      useExample: () => { this.setState({composer:'제목은 국가별 사과 보유량, 호주 50, 한국 70, 미국 100으로 만들어줘. 한국 항목만 강조해줘.'}); if (this.taRef.current) this.taRef.current.focus(); },
+      suggestions: [
+        '막대그래프 만들어줘','싱크 만들어줘',
+        '50대 정치인 정장입은 역광 이미지 만들어줘.','도표 만들어줘',
+      ].map(text => ({ text, onUse: () => { this.setState({composer:text}); if (this.taRef.current) this.taRef.current.focus(); } })),
+      msgs, msgRef: this.msgRef, taRef: this.taRef,
+      composer: s.composer, onCompose: e=>this.setState({composer:e.target.value}),
+      onKey: e => { if (e.key==='Enter' && !e.shiftKey) { e.preventDefault(); this.send(); } },
+      onSend: () => this.send(),
+      composerPh: selectedTpl ? '제목, 항목과 수치, 강조 대상을 입력해 주세요' : '평소 말하듯 편하게 설명해 주세요.',
+      composerModel: s.saved ? s.saved.model : '모델 미연결',
+      sendBg: s.composer.trim() && !s.busy ? 'rgb(51,102,255)' : 'rgba(112,115,124,0.12)',
+      sendFg: s.composer.trim() && !s.busy ? '#fff' : 'rgb(152,155,162)',
+      statusTpl: selectedTpl ? selectedTpl.name : '미선택',
+      genState: s.genState,
+      genDot: s.busy ? 'rgb(51,102,255)' : (s.genState==='생성 완료' ? 'var(--status-positive, rgb(0,163,82))' : 'rgb(174,176,182)'),
+      statusModel: s.saved ? `${s.saved.model} (${s.saved.mode==='internal'?'내부 서버':'외부 API'})` : '미연결',
+      toast: s.toast,
+      modalOpen: s.modalOpen,
+      isInternal: s.mode==='internal', isExternal: s.mode==='external',
+      pickInternal: () => this.setState({mode:'internal', connStatus:'idle', models:[], model:null, provDropOpen:false, modelDropOpen:false}),
+      pickExternal: () => this.setState({mode:'external', provider:s.provider||'GPT', connStatus:'idle', models:[], model:null, provDropOpen:false, modelDropOpen:false}),
+      segIntBg: s.mode==='internal' ? 'rgb(255,255,255)' : 'transparent', segIntFg: s.mode==='internal' ? 'rgb(23,23,25)' : 'rgb(112,115,124)',
+      segIntShadow: s.mode==='internal' ? '0 1px 3px rgba(23,23,23,0.08), inset 0 0 0 1px rgba(112,115,124,0.16)' : 'none',
+      segExtBg: s.mode==='external' ? 'rgb(255,255,255)' : 'transparent', segExtFg: s.mode==='external' ? 'rgb(23,23,25)' : 'rgb(112,115,124)',
+      segExtShadow: s.mode==='external' ? '0 1px 3px rgba(23,23,23,0.08), inset 0 0 0 1px rgba(112,115,124,0.16)' : 'none',
+      serverUrl: s.serverUrl, onUrl: e=>this.setState({serverUrl:e.target.value, connStatus:'idle'}),
+      provider: s.provider, provDropOpen: s.provDropOpen, providersView,
+      toggleProvDrop: () => this.setState({provDropOpen:!s.provDropOpen, modelDropOpen:false}),
+      apiKey: s.apiKey, onKeyInput: e=>this.setState({apiKey:e.target.value.replace(/\s/g,''), connStatus:'idle'}),
+      keyInputType: s.showKey ? 'text' : 'password',
+      keyEyeName: s.showKey ? 'IconNormalEyeSlashNameEyeSlashFillFalse' : 'IconNormalEyeNameEyeFillFalse',
+      toggleShowKey: () => this.setState({showKey:!s.showKey}),
+      lookup: () => this.lookup(),
+      connChecking: s.connStatus==='checking', connNotChecking: s.connStatus!=='checking',
+      connText: conn.text, connColor: conn.color, connDot: conn.dot, connSubText: conn.sub || null,
+      modelLabelClr: connected ? 'rgb(112,115,124)' : 'rgb(194,196,200)',
+      modelFieldText: s.model || (connected ? '모델 선택' : '조회 후 선택할 수 있습니다'),
+      modelFieldClr: s.model ? 'rgb(23,23,25)' : 'rgb(152,155,162)',
+      modelCursor: connected && s.models.length ? 'pointer' : 'default',
+      modelOpacity: connected && s.models.length ? 1 : 0.55,
+      modelDropOpen: s.modelDropOpen, modelsView,
+      toggleModelDrop: () => { if (connected && s.models.length) this.setState({modelDropOpen:!s.modelDropOpen, provDropOpen:false}); },
+      saveBg: canSave ? 'rgb(51,102,255)' : 'rgba(112,115,124,0.12)', saveFg: canSave ? '#fff' : 'rgb(152,155,162)',
+      saveCursor: canSave ? 'pointer' : 'default',
+      saveConn: () => { if (!canSave) return;
+        this.setState({saved:{mode:s.mode, model:s.model, provider:s.provider}, modalOpen:false, provDropOpen:false, modelDropOpen:false});
+        this.showToast(`AI 모델 연결됨 · ${s.model}`); },
+    };
+  }
+}
+</script>
+</body>
+</html>

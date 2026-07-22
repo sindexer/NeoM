@@ -1,0 +1,15 @@
+/* Wanted Design System — webfonts
+   Source Figma uses "Pretendard JP" (primary UI face, Korean+Japanese+Latin) and
+   "Wanted Sans" (brand/display face, used sparingly for large marketing headlines).
+   Neither ships as binaries in the .fig; both are the SAME real, official open-source
+   font families (SIL OFL) the design references — served here from their official
+   jsDelivr CDN distributions rather than re-hosted binaries. Not a substitution. */
+
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-jp.min.css");
+@import url("https://cdn.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.1/packages/wanted-sans/fonts/webfonts/variable/split/WantedSansVariable.min.css");
+
+:root {
+  --font-primary: "Pretendard JP", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; /* @kind font */
+  --font-display: "WantedSans Variable", "Pretendard JP", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; /* @kind font */
+  --font-mono: "SF Mono", ui-monospace, Menlo, Consolas, monospace; /* @kind font */
+}
